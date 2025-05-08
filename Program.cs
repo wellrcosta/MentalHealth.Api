@@ -17,11 +17,32 @@ builder.Services.AddCors();
 Logger logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .Enrich.FromLogContext()
-    .WriteTo.GrafanaLoki(builder.Configuration["Loki:Url"]!, labels:
-    [
-        new LokiLabel { Key = "app", Value = "mental-health-api" },
-        new LokiLabel { Key = "env", Value = builder.Environment.EnvironmentName }
-    ])
+    .WriteTo.Conditional(
+        condition: _ =>
+        {
+            return IsLokiAvailable(builder.Configuration["Loki:Url"]!);
+
+            static bool IsLokiAvailable(string lokiUrl)
+            {
+                try
+                {
+                    using HttpClient httpClient = new();
+                    HttpResponseMessage response = httpClient.GetAsync($"{lokiUrl}/ready").Result;
+                    return response.IsSuccessStatusCode;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        },
+        configureSink: s => s.GrafanaLoki(builder.Configuration["Loki:Url"]!, labels:
+        [
+            new LokiLabel { Key = "app", Value = "mental-health-api" },
+            new LokiLabel { Key = "env", Value = builder.Environment.EnvironmentName }
+        ])
+    )
+    .WriteTo.Console() // fallback
     .CreateLogger();
 
 builder.Logging.ClearProviders();
