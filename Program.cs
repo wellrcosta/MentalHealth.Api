@@ -1,4 +1,8 @@
-var builder = WebApplication.CreateBuilder(args);
+using Serilog;
+using Serilog.Core;
+using Serilog.Sinks.Grafana.Loki;
+
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
@@ -7,7 +11,23 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
+builder.Services.AddCors();
+
+// Logging
+Logger logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .WriteTo.GrafanaLoki(builder.Configuration["Loki:Url"]!, labels:
+    [
+        new LokiLabel { Key = "app", Value = "mental-health-api" },
+        new LokiLabel { Key = "env", Value = builder.Environment.EnvironmentName }
+    ])
+    .CreateLogger();
+
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
+
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
