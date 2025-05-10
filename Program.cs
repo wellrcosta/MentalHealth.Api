@@ -56,6 +56,8 @@ builder.Logging.AddSerilog(logger);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddAutoMapper(typeof(Program));
+
 builder.Services.AddApplicationServices();
 
 WebApplication app = builder.Build();
