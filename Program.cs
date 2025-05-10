@@ -1,4 +1,5 @@
 using MentalHealth.Api.Data;
+using MentalHealth.Api.Extensions;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -55,6 +56,7 @@ builder.Logging.AddSerilog(logger);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddApplicationServices();
 
 WebApplication app = builder.Build();
 
