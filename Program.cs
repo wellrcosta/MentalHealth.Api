@@ -1,3 +1,7 @@
+using MentalHealth.Api.Data;
+
+using Microsoft.EntityFrameworkCore;
+
 using Serilog;
 using Serilog.Core;
 using Serilog.Sinks.Grafana.Loki;
@@ -47,6 +51,10 @@ Logger logger = new LoggerConfiguration()
 
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 WebApplication app = builder.Build();
 
