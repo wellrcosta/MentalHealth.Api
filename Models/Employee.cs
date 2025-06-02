@@ -7,6 +7,8 @@ public class Employee
     public required string Email { get; set; }
     public string? Team { get; set; }
     public string? Role { get; set; }
+    public Guid? CompanyId { get; set; }
+    public Company? Company { get; set; }
 
     public DateTime AcceptedTermsAt { get; set; }
     public DateTime AcceptedPrivacyAt { get; set; }

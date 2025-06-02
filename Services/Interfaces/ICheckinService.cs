@@ -1,5 +1,4 @@
 using MentalHealth.Api.DTOs;
-using MentalHealth.Api.Models;
 
 namespace MentalHealth.Api.Services.Interfaces;
 

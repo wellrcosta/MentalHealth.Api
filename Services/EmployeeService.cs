@@ -15,7 +15,10 @@ public class EmployeeService(AppDbContext context, ILogger<EmployeeService> logg
         {
             throw new Exception("Employee with this email already exists.");
         }
-
+        bool companyExists = await context.Companies.AnyAsync(c => c.Id == dto.CompanyId);
+        if (!companyExists)
+            throw new Exception("Company not found.");
+        
         Employee employee = new()
         {
             Name = dto.Name,
@@ -24,7 +27,8 @@ public class EmployeeService(AppDbContext context, ILogger<EmployeeService> logg
             Role = dto.Role,
             AcceptedTermsAt = dto.AcceptedTermsAt,
             AcceptedPrivacyAt = dto.AcceptedPrivacyAt,
-            AcceptedIp = acceptedIp
+            AcceptedIp = acceptedIp,
+            CompanyId = dto.CompanyId
         };
 
         context.Employees.Add(employee);

@@ -14,15 +14,25 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     {
         get => Set<Checkin>();
     }
+    
+    public DbSet<Company> Companies
+    {
+        get => Set<Company>();
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Employee>(e =>
-        {
-            e.HasIndex(emp => emp.Email).IsUnique();
-        });
+        modelBuilder.Entity<Employee>()
+            .HasIndex(e => e.Email)
+            .IsUnique();
+
+        modelBuilder.Entity<Employee>()
+            .HasOne(e => e.Company)
+            .WithMany(c => c.Employees)
+            .HasForeignKey(e => e.CompanyId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Checkin>()
             .HasOne(c => c.Employee)
