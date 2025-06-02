@@ -19,7 +19,7 @@ This API helps companies:
 ```
 http://localhost:5000/swagger/index.html
 ```
- You can edit the base URL in the `launchSettings.json` file located in `./src/MentalHealth.Api/Properties/launchSettings.json`.
+ You can edit the base URL in the `launchSettings.json` file located in `/Properties/launchSettings.json`.
 
 ---
 
